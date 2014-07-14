@@ -117,6 +117,7 @@ func perform(encodedStepPath, encodedCombinedStepEnvs string) error {
 	if err != nil {
 		return err
 	}
+	decodedStepCommand = ExpandPath(decodedStepCommand)
 	decodedStepEnvPairs, err := decodeCombinedEnvs(encodedCombinedStepEnvs)
 	if err != nil {
 		return err
