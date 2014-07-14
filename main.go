@@ -7,6 +7,8 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"os/user"
+	"path/filepath"
 )
 
 var (
@@ -14,11 +16,43 @@ var (
 	flagEncodedCombinedStepEnvs = flag.String("stepenvs", "", "[REQUIRED] step's encoded-combined environment key-value pairs")
 )
 
-func transformIfSpecialEnvPair(envKeyValuePair EnvKeyValuePair) EnvKeyValuePair {
-	// if envKeyValuePair.Key == "__INPUT_FILE__" {
+func writeStringToFile(filePath, content string) error {
+	if filePath == "" {
+		return errors.New("No path provided!")
+	}
 
-	// }
-	return envKeyValuePair
+	file, err := os.Create(filePath)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	_, err = file.Write([]byte(content))
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func transformIfSpecialEnv(envKeyValuePair EnvKeyValuePair) (EnvKeyValuePair, error) {
+	if envKeyValuePair.Key == "__INPUT_FILE__" {
+		log.Println(" (i) Special key: __INPUT_FILE__")
+		usr, err := user.Current()
+		if err != nil {
+			return EnvKeyValuePair{}, err
+		}
+		tmpFolderPath := filepath.Join(usr.HomeDir, "bitrise/tmp")
+		if err := os.MkdirAll(tmpFolderPath, 0777); err != nil {
+			return EnvKeyValuePair{}, err
+		}
+		stepInputStoreFilePath := filepath.Join(tmpFolderPath, "step_input_store")
+		if err := writeStringToFile(stepInputStoreFilePath, envKeyValuePair.Value); err != nil {
+			return EnvKeyValuePair{}, err
+		}
+		envKeyValuePair.Value = stepInputStoreFilePath
+	}
+	return envKeyValuePair, nil
 }
 
 func filterEnvironmentKeyValuePairs(envKeyValuePair []EnvKeyValuePair) []EnvKeyValuePair {
@@ -34,7 +68,11 @@ func filterEnvironmentKeyValuePairs(envKeyValuePair []EnvKeyValuePair) []EnvKeyV
 			continue
 		}
 
-		aPair = transformIfSpecialEnvPair(aPair)
+		aPair, err := transformIfSpecialEnv(aPair)
+		if err != nil {
+			log.Printf("[i] Failed to convert special Env - ignored (Key: %s | Value: %s)\n", aPair.Key, aPair.Value)
+			continue
+		}
 		filteredPairs = append(filteredPairs, aPair)
 	}
 

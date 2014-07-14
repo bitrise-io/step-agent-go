@@ -5,7 +5,7 @@ import (
 )
 
 // TODO:
-//  * transformIfSpecialEnvPair
+//  * transformIfSpecialEnv
 //  * filterEnvironmentKeyValuePairs
 
 func Test_perform(t *testing.T) {

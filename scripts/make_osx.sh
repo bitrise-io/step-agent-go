@@ -2,11 +2,11 @@
 
 # build
 echo "Building..."
-go build main.go
+go build
 
 # move the created 'main' binary into 'bin/step_agent_osx'
 echo "Moving to bin..."
 mkdir -p bin
-mv main bin/step_agent_osx
+mv step-agent-go bin/step_agent_osx
 
 echo "Done"
