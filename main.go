@@ -11,11 +11,6 @@ import (
 	"path/filepath"
 )
 
-var (
-	flagEncodedStepPath         = flag.String("steppath", "", "[REQUIRED] step's path (base64 encoded)")
-	flagEncodedCombinedStepEnvs = flag.String("stepenvs", "", "[REQUIRED] step's encoded-combined environment key-value pairs")
-)
-
 func writeStringToFile(filePath, content string) error {
 	if filePath == "" {
 		return errors.New("No path provided!")
@@ -138,6 +133,11 @@ func usage() {
 }
 
 func main() {
+	var (
+		flagEncodedStepPath         = flag.String("steppath", "", "[REQUIRED] step's path (base64 encoded)")
+		flagEncodedCombinedStepEnvs = flag.String("stepenvs", "", "[REQUIRED] step's encoded-combined environment key-value pairs")
+	)
+
 	flag.Usage = usage
 	flag.Parse()
 
