@@ -46,6 +46,7 @@ func transformIfSpecialEnv(envKeyValuePair EnvKeyValuePair) (EnvKeyValuePair, er
 			return EnvKeyValuePair{}, err
 		}
 		envKeyValuePair.Value = stepInputStoreFilePath
+		envKeyValuePair.IsExpand = false
 	}
 	return envKeyValuePair, nil
 }
