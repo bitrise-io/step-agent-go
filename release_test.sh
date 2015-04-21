@@ -20,3 +20,7 @@ if [ "$status" != "" ]; then
 	echo " (i) git status: $status"
 	exit 1
 fi
+
+echo
+echo "=> Ready for release!"
+echo
