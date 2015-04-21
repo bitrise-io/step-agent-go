@@ -7,7 +7,7 @@ if [ $? -ne 0 ]; then
 fi
 
 # run the build
-bash scripts/make_osx.sh
+bash _scripts/make_osx.sh
 if [ $? -ne 0 ]; then
 	echo " [!] Failed to make"
 	exit 1
